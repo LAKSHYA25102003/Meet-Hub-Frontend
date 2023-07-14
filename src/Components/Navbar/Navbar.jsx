@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-function Navbar() {
+function Navbar({joinMeetingRef,newMeetingHandler}) {
   const navigate = useNavigate();
   return (
     <div className="flex justify-between items-center w-full p-3 ">
@@ -22,12 +22,12 @@ function Navbar() {
       <div className="flex items-center gap-3">
         <div className="text-brand md:text-lg cursor-pointer">Sign In</div>
         <div>
-          <button className="button text-base hover:bg-secondary hover:text-white font-medium border-[2px] text-secondary border-secondary px-3 py-2 rounded-md">
+          <button onClick={()=>{joinMeetingRef.current.focus()}} className="button text-base hover:bg-secondary hover:text-white font-medium border-[2px] text-secondary border-secondary px-3 py-[6px] rounded-md">
             Join the meeting
           </button>
         </div>
         <div>
-          <button className="button text-base font-medium  text-white bg-gradient-to-r hover:scale-105 transition-all ease-in-out  from-secondary via-shade to-secondary  px-3 py-2 rounded-md">
+          <button onClick={newMeetingHandler} className="button text-base font-medium  text-white bg-gradient-to-r hover:scale-105 transition-all ease-in-out  from-secondary via-shade to-secondary  px-3 py-2 rounded-md">
             Start meeting
           </button>
         </div>
