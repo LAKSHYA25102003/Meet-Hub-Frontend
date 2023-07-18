@@ -8,13 +8,62 @@ import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import { useParams } from "react-router-dom";
 import RoomPrompt from "./RoomPrompt";
+import { useSelector } from "react-redux";
+import io from "socket.io-client";
+import { useDispatch } from "react-redux";
+import { setRoomUsers } from "../../Redux/Room/RoomAction";
+import { setCurrentUser } from "../../Redux/User/UserAction";
+import { updateRoom } from "../../Redux/Room/RoomAction";
 
 function Room() {
+  const dispatch = useDispatch();
   const params = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const [promptOpen, setPromptOpen] = useState(false);
   const [userID, setUserID] = useState("");
   const [meetingID, setMeetingID] = useState(params.id);
+  const { roomUsers } = useSelector((state) => state.roomUsers);
+  const currentUser = useSelector((state) => state.currentUser);
+  const [socket, setSocket] = useState(null);
+
+
+
+  useEffect(() => {
+    const newSocket = io("http://localhost:5000"); 
+    setSocket(newSocket);
+    return () => {
+      newSocket.disconnect(); 
+    };
+  }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("details", (data) => {
+        dispatch(setRoomUsers(data.meetingUsers));
+      });
+
+      socket.on("newUser",(data) => {
+        dispatch(updateRoom(data.otherUser));
+      });
+    }
+  }, [socket]);
+
+  const connectSocket = () => {
+    if (socket && userID) {
+      dispatch(
+        setCurrentUser({
+          meetingID: meetingID,
+          socketID: socket.id,
+          userID: userID,
+        })
+      );
+      socket.emit("userconnect", {
+        userID: userID,
+        meetingID: meetingID,
+      });
+    }
+  };
+
   const openModal = () => {
     setIsOpen(true);
   };
@@ -23,7 +72,9 @@ function Room() {
   };
 
   useEffect(() => {
-    setPromptOpen(true);
+    if (currentUser.socketID === "") {
+      setPromptOpen(true);
+    }
   }, []);
 
   return (
@@ -55,7 +106,7 @@ function Room() {
           <div className="flex justify-end gap-8 items-center text-white">
             <div className="cursor-pointer relative">
               <div className="absolute top-[-20px] right-[-12px] bg-gray-700 w-6 h-6 rounded-full text-center">
-                1
+                {roomUsers.length}
               </div>
               <PeopleAltOutlinedIcon />
             </div>
@@ -63,7 +114,13 @@ function Room() {
           </div>
         </div>
       </div>
-      <RoomPrompt promptOpen={promptOpen} setPromptOpen={setPromptOpen} userID={userID} setUserID={setUserID} />
+      <RoomPrompt
+        connectSocket={connectSocket}
+        promptOpen={promptOpen}
+        setPromptOpen={setPromptOpen}
+        userID={userID}
+        setUserID={setUserID}
+      />
     </div>
   );
 }

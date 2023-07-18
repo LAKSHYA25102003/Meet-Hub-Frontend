@@ -1,6 +1,7 @@
 import { Box, Modal } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import io from 'socket.io-client';
 
 const style = {
   position: "absolute",
@@ -14,14 +15,15 @@ const style = {
   p: 4,
 };
 
-function RoomPrompt({ promptOpen, setPromptOpen, userID, setUserID }) {
+function RoomPrompt({ promptOpen, setPromptOpen, userID, setUserID, connectSocket }) {
   const navigate = useNavigate();
-  const submitHandler=(e)=>{
+  const submitHandler = (e) => {
     e.preventDefault();
-    if(userID.trim()==='') return ;
-    console.log(userID);
+    if (userID.trim() === "") return;
     setPromptOpen(false);
-  }
+    connectSocket();
+  };
+
   return (
     <div>
       <Modal
@@ -48,13 +50,16 @@ function RoomPrompt({ promptOpen, setPromptOpen, userID, setUserID }) {
                   setUserID(e.target.value);
                 }}
                 value={userID}
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 outline-none dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="John"
                 required
               />
             </div>
             <div className="flex gap-3 justify-end items-center">
-              <button onClick={submitHandler} className="button text-base font-medium  text-white bg-gradient-to-r hover:scale-105 transition-all ease-in-out  from-secondary via-shade to-secondary  px-2 py-1 rounded-md">
+              <button
+                onClick={submitHandler}
+                className="button text-base font-medium  text-white bg-gradient-to-r hover:scale-105 transition-all ease-in-out  from-secondary via-shade to-secondary  px-2 py-1 rounded-md"
+              >
                 Submit
               </button>
               <button
