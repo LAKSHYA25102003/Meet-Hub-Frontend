@@ -1,18 +1,21 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Navbar from "../../Components/Navbar/Navbar";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import KeyboardRoundedIcon from "@mui/icons-material/KeyboardRounded";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
+import RoomContext from "../../Context/Room/RoomContext";
 
 const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
 const charactersLength = characters.length;
 
 function Home() {
+  const context=useContext(RoomContext);
   const joinMeetingRef = useRef(null);
   const navigate = useNavigate();
   const [meetValue, setMeetValue] = useState("");
+  const {ws}=context;
 
   const isUrl = (input) => {
     const urlRegex = /^(ftp|http|https):\/\/[^ "]+(\?[^ "]+)?$/;
@@ -20,28 +23,13 @@ function Home() {
   };
 
   const joinClickHandler = (e) => {
-    e.preventDefault();
-    let id;
-    if (meetValue.trim() === "") return;
-    if (isUrl(meetValue)) {
-      const parts = meetValue.split("/");
-      const lastPart = parts[parts.length - 1];
-      id = lastPart.trim();
-    } else {
-      id = meetValue;
-    }
-    navigate("/meet/"+id);
-  };
+    
+  }
 
-  const newMeetingHandler = (e) => {
+  const newMeetingHandler=(e)=>{
     e.preventDefault();
-    let id = "";
-    for (let i = 0; i < 8; i++) {
-      const randomIndex = Math.floor(Math.random() * charactersLength);
-      id += characters.charAt(randomIndex);
-    }
-    navigate("/meet/" + id);
-  };
+    ws.emit("create-room");
+  }
 
   return (
     <div className="text-center">

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { faker } from '@faker-js/faker';
 import MeetingDetailCard from "./MeetingDetailCard";
 import MicIcon from "@mui/icons-material/Mic";
 import VideocamOffOutlinedIcon from "@mui/icons-material/VideocamOffOutlined";
@@ -14,81 +15,35 @@ import { useDispatch } from "react-redux";
 import { setRoomUsers } from "../../Redux/Room/RoomAction";
 import { setCurrentUser } from "../../Redux/User/UserAction";
 import { updateRoom } from "../../Redux/Room/RoomAction";
+import SimplePeer from "simple-peer";
+import RoomContext from "../../Context/Room/RoomContext";
+import VideoPlayer from "../../Components/VideoPlayer/VideoPlayer";
 
 function Room() {
-  const dispatch = useDispatch();
-  const params = useParams();
-  const [isOpen, setIsOpen] = useState(false);
-  const [promptOpen, setPromptOpen] = useState(false);
-  const [userID, setUserID] = useState("");
-  const [meetingID, setMeetingID] = useState(params.id);
-  const { roomUsers } = useSelector((state) => state.roomUsers);
-  const currentUser = useSelector((state) => state.currentUser);
-  const [socket, setSocket] = useState(null);
-
-
-
-  useEffect(() => {
-    const newSocket = io("http://localhost:5000"); 
-    setSocket(newSocket);
-    return () => {
-      newSocket.disconnect(); 
-    };
-  }, []);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on("details", (data) => {
-        dispatch(setRoomUsers(data.meetingUsers));
-      });
-
-      socket.on("newUser",(data) => {
-        dispatch(updateRoom(data.otherUser));
-      });
+  const {id}=useParams();
+  const {ws,me,stream}=useContext(RoomContext);
+  useEffect(()=>{
+    if(me)
+    {
+      ws.emit("join-room",{roomId:id,peerId:me._id})
     }
-  }, [socket]);
-
-  const connectSocket = () => {
-    if (socket && userID) {
-      dispatch(
-        setCurrentUser({
-          meetingID: meetingID,
-          socketID: socket.id,
-          userID: userID,
-        })
-      );
-      socket.emit("userconnect", {
-        userID: userID,
-        meetingID: meetingID,
-      });
-    }
-  };
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
-  useEffect(() => {
-    if (currentUser.socketID === "") {
-      setPromptOpen(true);
-    }
-  }, []);
-
+  },[id,me,ws])
   return (
-    <div className="bg-black min-h-screen w-full">
+    <div className="min-h-screen w-full">
       <div className="flex flex-col justify-between h-full w-full">
-        <div className="room-top h-[90vh]"></div>
-        <div className="room-bottom h-[10vh] grid grid-cols-3 p-4 px-6">
-          <div className="flex justify-start">
-            <MeetingDetailCard
-              openModal={openModal}
-              closeModal={closeModal}
-              isOpen={isOpen}
-            />
+        <div className="room-top h-[90vh] p-4">
+          <div className="flex-1 grid h-[90vh] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            <VideoPlayer stream={stream}/>
           </div>
+        </div>
+        {/* <div className="room-bottom h-[10vh] grid grid-cols-3 p-4 px-6">
+          <div className="flex justify-start">
+           <MeetingDetailCard
+           openModal={openModal}
+           closeModal={closeModal}
+            isOpen={isOpen}
+           />
+          </div> 
           <div className="flex gap-3 text-xl justify-center items-center">
             <div className="h-10 cursor-pointer w-10 flex justify-center items-center bg-gray-700 text-white rounded-full">
               <MicIcon />
@@ -106,21 +61,20 @@ function Room() {
           <div className="flex justify-end gap-8 items-center text-white">
             <div className="cursor-pointer relative">
               <div className="absolute top-[-20px] right-[-12px] bg-gray-700 w-6 h-6 rounded-full text-center">
-                {roomUsers.length}
+                9
               </div>
               <PeopleAltOutlinedIcon />
             </div>
             <MessageOutlinedIcon className="cursor-pointer" />
           </div>
-        </div>
+        </div> */}
       </div>
-      <RoomPrompt
-        connectSocket={connectSocket}
+      {/* <RoomPrompt
         promptOpen={promptOpen}
         setPromptOpen={setPromptOpen}
-        userID={userID}
-        setUserID={setUserID}
-      />
+        userID={user}
+        setUserID={setUser}
+      /> */}
     </div>
   );
 }
