@@ -1,22 +1,16 @@
-
 const {
     ADD_PEER_STREAM,
     REMOVE_PEER_STREAM,
     ADD_PEER_NAME,
     ADD_ALL_PEERS,
-} = require("./peerActions");
+} = require("./PeerAction");
 
 
-const initialState = {};
 
 
-const ADD_PEER_STREAM = "ADD_PEER_STREAM";
-const REMOVE_PEER_STREAM = "REMOVE_PEER_STREAM";
-const ADD_PEER_NAME = "ADD_PEER_NAME";
-const ADD_ALL_PEERS = "ADD_ALL_PEERS";
 
 
-const peersReducer = (state = initialState, action) => {
+const PeersReducer = (state , action) => {
     switch (action.type) {
         case ADD_PEER_STREAM:
             return {
@@ -49,4 +43,4 @@ const peersReducer = (state = initialState, action) => {
     }
 };
 
-export default peersReducer;
+export default PeersReducer;

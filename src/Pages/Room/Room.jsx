@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 import MeetingDetailCard from "./MeetingDetailCard";
 import MicIcon from "@mui/icons-material/Mic";
 import VideocamOffOutlinedIcon from "@mui/icons-material/VideocamOffOutlined";
@@ -20,17 +20,22 @@ import RoomContext from "../../Context/Room/RoomContext";
 import VideoPlayer from "../../Components/VideoPlayer/VideoPlayer";
 
 function Room() {
-  const {id}=useParams();
-  const {ws,me,stream}=useContext(RoomContext);
-  useEffect(()=>{
-    if(me)
-    {
-      ws.emit("join-room",{roomId:id,peerId:me._id})
+  const { id } = useParams();
+  const { ws, me, stream, peers } = useContext(RoomContext);
+  console.log(peers, "hi");
+  useEffect(() => {
+    if (me) {
+      ws.emit("join-room", { roomId: id, peerId: me._id });
     }
-  },[id,me,ws])
+  }, [id, me, ws]);
   return (
     <div>
-      <VideoPlayer stream={stream}/>
+      <div className="grid-cols-1 sm:grid-cols-3 gap-3">
+        <VideoPlayer stream={stream} />
+        {Object.values(peers).map((peer) => {
+          return <VideoPlayer stream={peer.stream} />;
+        })}
+      </div>
     </div>
   );
 }
