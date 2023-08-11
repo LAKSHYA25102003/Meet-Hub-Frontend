@@ -29,52 +29,8 @@ function Room() {
     }
   },[id,me,ws])
   return (
-    <div className="min-h-screen w-full">
-      <div className="flex flex-col justify-between h-full w-full">
-        <div className="room-top h-[90vh] p-4">
-          <div className="flex-1 grid h-[90vh] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            <VideoPlayer stream={stream}/>
-          </div>
-        </div>
-        {/* <div className="room-bottom h-[10vh] grid grid-cols-3 p-4 px-6">
-          <div className="flex justify-start">
-           <MeetingDetailCard
-           openModal={openModal}
-           closeModal={closeModal}
-            isOpen={isOpen}
-           />
-          </div> 
-          <div className="flex gap-3 text-xl justify-center items-center">
-            <div className="h-10 cursor-pointer w-10 flex justify-center items-center bg-gray-700 text-white rounded-full">
-              <MicIcon />
-            </div>
-            <div className="h-10 cursor-pointer w-10 flex justify-center items-center bg-red-500 text-white rounded-full">
-              <VideocamOffOutlinedIcon />
-            </div>
-            <div className="h-10 cursor-pointer w-10 flex justify-center items-center bg-gray-700 text-white rounded-full">
-              <PresentToAllOutlinedIcon />
-            </div>
-            <div className="h-10 cursor-pointer w-10 flex justify-center items-center bg-red-500 text-white rounded-full">
-              <CallEndOutlinedIcon />
-            </div>
-          </div>
-          <div className="flex justify-end gap-8 items-center text-white">
-            <div className="cursor-pointer relative">
-              <div className="absolute top-[-20px] right-[-12px] bg-gray-700 w-6 h-6 rounded-full text-center">
-                9
-              </div>
-              <PeopleAltOutlinedIcon />
-            </div>
-            <MessageOutlinedIcon className="cursor-pointer" />
-          </div>
-        </div> */}
-      </div>
-      {/* <RoomPrompt
-        promptOpen={promptOpen}
-        setPromptOpen={setPromptOpen}
-        userID={user}
-        setUserID={setUser}
-      /> */}
+    <div>
+      <VideoPlayer stream={stream}/>
     </div>
   );
 }

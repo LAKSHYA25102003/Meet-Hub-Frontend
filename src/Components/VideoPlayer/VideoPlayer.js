@@ -1,18 +1,20 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-function VideoPlayer({stream}) {
-  const videoRef=useRef(null);
-  useEffect(()=>{
-    if(videoRef.current)
-    {
-        videoRef.current.srcObject=stream;
-    }
-  },[])
-  return (
-    <div>
-      <video src={videoRef} playsInline muted></video>
-    </div>
-  )
-}
+const VideoPlayer=({ stream }) => {
+    const videoRef = useRef(null);
 
-export default VideoPlayer
+    useEffect(() => {
+        if (videoRef.current && stream) videoRef.current.srcObject = stream;
+    }, [stream]);
+    return (
+        <video
+            data-testid="peer-video"
+            style={{ width: "100%" }}
+            ref={videoRef}
+            autoPlay
+            muted={true}
+        />
+    );
+};
+
+export default VideoPlayer;
